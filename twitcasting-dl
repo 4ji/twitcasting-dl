@@ -1,0 +1,16 @@
+twitcastingURL=$1
+
+pattern="http://twitcasting.tv/\\(.*\\)/movie/\\([0-9]*\\)"
+idnum=$(echo $twitcastingURL | sed -e "s%$pattern%\1:\2%")
+echo $idnum
+id=${idnum%%:*}
+num=${idnum##*:}
+filename=$id\_$num.mp4
+url=http://dl01.twitcasting.tv/$id/download/$num?dl=1
+echo $url
+if [ -n "$(curl  -v -r 0-99 $url 2>&1 | grep 206)" ]; then
+	echo 'Download Start..'
+	curl -o $filename $url
+else
+	echo 'Video Not Found'
+fi
